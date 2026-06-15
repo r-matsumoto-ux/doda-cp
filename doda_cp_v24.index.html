@@ -1,0 +1,1150 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DODA → キャリアプラス v24</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0e0f11;--bg2:#16181c;--bg3:#1e2128;
+  --border:rgba(255,255,255,.07);--border2:rgba(255,255,255,.14);
+  --text:#e8eaed;--text2:#8b909a;--text3:#555a63;
+  --accent:#4ade80;--accent-dim:rgba(74,222,128,.12);--accent-glow:rgba(74,222,128,.25);
+  --warn:#fbbf24;--warn-dim:rgba(251,191,36,.12);
+  --info:#60a5fa;--info-dim:rgba(96,165,250,.12);
+  --danger:#f87171;--danger-dim:rgba(248,113,113,.12);
+  --r:10px;--rlg:14px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Noto Sans JP',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px;line-height:1.6}
+.app{max-width:900px;margin:0 auto;padding:2.5rem 1.5rem 5rem}
+
+/* Header */
+.eyebrow{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--accent);text-transform:uppercase;margin-bottom:8px}
+h1{font-size:clamp(20px,3.5vw,30px);font-weight:700;line-height:1.2;margin-bottom:8px}
+h1 span{color:var(--accent)}
+.subtitle{color:var(--text2);font-size:13px;font-weight:300;margin-bottom:2.5rem}
+
+/* Tabs */
+.tabs{display:flex;border-bottom:1px solid var(--border2);margin-bottom:1.5rem}
+.tab{padding:9px 20px;font-size:13px;font-weight:500;cursor:pointer;border-bottom:2px solid transparent;color:var(--text3);transition:all .15s;background:none;border-top:none;border-left:none;border-right:none;font-family:'Noto Sans JP',sans-serif}
+.tab:hover{color:var(--text2)}
+.tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+
+/* Cards */
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--rlg);padding:1.25rem;margin-bottom:.875rem;transition:border-color .2s}
+.card:hover{border-color:var(--border2)}
+.sec-title{font-size:10px;font-family:'DM Mono',monospace;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+
+/* Inputs */
+textarea{width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r);color:var(--text);font-family:'DM Mono',monospace;font-size:11px;padding:10px;outline:none;resize:vertical;transition:border-color .15s;line-height:1.7}
+textarea:focus{border-color:var(--accent)}
+textarea::placeholder{color:var(--text3)}
+input[type="text"],input[type="number"]{width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r);color:var(--text);font-family:'Noto Sans JP',sans-serif;font-size:13px;padding:8px 12px;outline:none;transition:border-color .15s}
+input:focus{border-color:var(--accent)}
+select{width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r);color:var(--text);font-family:'Noto Sans JP',sans-serif;font-size:13px;padding:8px 12px;outline:none;appearance:none;-webkit-appearance:none}
+select:focus{border-color:var(--accent)}
+select option{background:var(--bg3)}
+
+/* Buttons */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:var(--r);font-size:13px;font-family:'Noto Sans JP',sans-serif;font-weight:500;cursor:pointer;transition:all .15s;border:1px solid var(--border2);background:transparent;color:var(--text);white-space:nowrap}
+.btn:hover{background:var(--bg3)}
+.btn:active{transform:scale(.97)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn-accent{background:var(--accent);color:#0e0f11;border-color:var(--accent);box-shadow:0 3px 16px var(--accent-glow)}
+.btn-accent:hover{background:#6ee09a}
+.btn-sm{padding:5px 12px;font-size:12px}
+.btn-warn{border-color:rgba(251,191,36,.3);color:var(--warn)}
+.btn-warn:hover{background:var(--warn-dim)}
+.btn-danger{border-color:rgba(248,113,113,.3);color:var(--danger)}
+.btn-danger:hover{background:var(--danger-dim)}
+.btn-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:10px}
+
+/* Job list */
+.job-list{display:flex;flex-direction:column;gap:8px}
+.job-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px;transition:border-color .2s}
+.job-card:hover{border-color:var(--border2)}
+.job-card.has-text{border-color:rgba(251,191,36,.3)}
+.job-card.done{border-color:rgba(74,222,128,.4)}
+.job-card.analyzing{border-color:rgba(251,191,36,.4);animation:pulse 1.4s ease-in-out infinite}
+.job-card.error-state{border-color:rgba(248,113,113,.3)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.7}}
+.job-header{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.job-left{flex:1;min-width:0}
+.job-url-text{font-family:'DM Mono',monospace;font-size:10px;color:var(--info);word-break:break-all;margin-bottom:4px}
+.job-title-text{font-size:13px;font-weight:500;color:var(--text);margin-bottom:5px}
+.job-meta{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:6px}
+.job-actions-col{display:flex;flex-direction:column;gap:5px;align-items:flex-end;flex-shrink:0}
+
+/* Progress */
+.prog-wrap{margin-top:8px}
+.prog-track{height:3px;background:var(--bg);border-radius:2px;overflow:hidden;margin-bottom:4px}
+.prog-fill{height:100%;border-radius:2px;transition:width .4s ease}
+.prog-fill.analyzing{background:var(--warn)}
+.prog-fill.done{background:var(--accent)}
+.prog-row{display:flex;justify-content:space-between;font-family:'DM Mono',monospace;font-size:10px;color:var(--text3)}
+.prog-log{margin-top:5px;display:flex;flex-direction:column;gap:2px}
+.log-line{display:flex;gap:8px;font-family:'DM Mono',monospace;font-size:10px}
+.log-ts{color:var(--text3);flex-shrink:0}
+.log-msg{color:var(--text2)}
+.log-msg.ok{color:var(--accent)}
+.log-msg.err{color:var(--danger)}
+.log-msg.run{color:var(--warn)}
+
+/* Paste area (inline) */
+.paste-area-wrap{margin-top:10px;border-top:1px solid var(--border);padding-top:10px}
+.paste-hint{font-size:11px;color:var(--text2);margin-bottom:6px;line-height:1.7}
+.paste-hint strong{color:var(--text)}
+.paste-actions{display:flex;gap:6px;margin-top:8px;align-items:center}
+.char-count{font-family:'DM Mono',monospace;font-size:10px;color:var(--text3)}
+
+/* Stats */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:1.25rem}
+.stat-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:.875rem}
+.stat-lbl{font-size:10px;color:var(--text3);font-family:'DM Mono',monospace;letter-spacing:.08em;text-transform:uppercase;margin-bottom:5px}
+.stat-val{font-size:24px;font-weight:700;color:var(--accent);line-height:1;font-family:'DM Mono',monospace}
+.stat-val.warn{color:var(--warn)}
+
+/* Filter */
+.filter-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.filter-group label{display:block;font-size:10px;font-family:'DM Mono',monospace;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:5px}
+.filter-bar{display:flex;align-items:center;justify-content:space-between;padding:9px 12px;background:var(--bg3);border-radius:var(--r);margin-top:12px;border:1px solid var(--border)}
+.active-tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+.tag{display:inline-flex;align-items:center;gap:4px;font-size:10px;padding:2px 9px;background:var(--info-dim);color:var(--info);border:1px solid rgba(96,165,250,.2);border-radius:20px;font-family:'DM Mono',monospace;cursor:pointer}
+.tag:hover{background:rgba(96,165,250,.2)}
+
+/* Preview table */
+.tbl-scroll{overflow:auto;max-height:300px}
+table{width:100%;border-collapse:collapse;font-size:12px}
+thead th{position:sticky;top:0;text-align:left;padding:7px 9px;color:var(--text3);font-weight:500;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.08em;text-transform:uppercase;border-bottom:1px solid var(--border);background:var(--bg2);white-space:nowrap}
+tbody tr:hover{background:var(--bg3)}
+tbody td{padding:6px 9px;border-bottom:1px solid var(--border);color:var(--text);max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+tbody tr:last-child td{border-bottom:none}
+
+/* Badges */
+.badge{display:inline-block;font-size:9px;padding:1px 6px;border-radius:4px;font-family:'DM Mono',monospace}
+.badge-ok{background:var(--accent-dim);color:var(--accent);border:1px solid rgba(74,222,128,.2)}
+.badge-info{background:var(--info-dim);color:var(--info);border:1px solid rgba(96,165,250,.2)}
+.badge-warn{background:var(--warn-dim);color:var(--warn);border:1px solid rgba(251,191,36,.2)}
+.badge-st{font-size:10px;padding:2px 7px;border-radius:4px;font-family:'DM Mono',monospace}
+.st-pending{background:var(--bg2);color:var(--text3);border:1px solid var(--border2)}
+.st-has-text{background:var(--warn-dim);color:var(--warn);border:1px solid rgba(251,191,36,.2)}
+.st-analyzing{background:var(--info-dim);color:var(--info);border:1px solid rgba(96,165,250,.2)}
+.st-done{background:var(--accent-dim);color:var(--accent);border:1px solid rgba(74,222,128,.2)}
+.st-error{background:var(--danger-dim);color:var(--danger);border:1px solid rgba(248,113,113,.2)}
+
+.empty{text-align:center;padding:3rem 1rem;color:var(--text3)}
+.empty .ico{font-size:32px;margin-bottom:10px;display:block;filter:grayscale(1)}
+.hint-box{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:10px 14px;font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.8}
+.hint-box strong{color:var(--text)}
+.err-inline{font-size:11px;color:var(--danger);margin-top:6px}
+.err-box{padding:8px 12px;background:var(--danger-dim);border:1px solid rgba(248,113,113,.2);border-radius:var(--r);font-size:12px;color:var(--danger);margin-top:6px}
+.hidden{display:none!important}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="eyebrow">求人票ツール v24.0</div>
+  <h1>DODA → <span>キャリアプラス</span> CSVコンバーター</h1>
+  <p class="subtitle">DODAの求人テキストを貼り付け → AI変換 → まとめてCSV出力</p>
+
+
+  <!-- APIキー設定（折りたたみ） -->
+  <div style="margin-bottom:1.25rem">
+    <div style="display:flex;align-items:center;gap:10px">
+      <span id="apiKeyIndicator" style="font-size:12px;font-family:'DM Mono',monospace;color:var(--text3)">APIキー: 未設定</span>
+      <button class="btn btn-sm" id="btnToggleApiKey" style="font-size:11px">⚙ APIキー設定</button>
+    </div>
+    <div id="apiKeyPanel" class="card" style="margin-top:10px;border-color:rgba(251,191,36,.35)">
+      <div class="sec-title" style="color:var(--warn)">⚙ Anthropic APIキー設定</div>
+      <div style="font-size:12px;color:var(--text2);margin-bottom:10px;line-height:1.8">
+        <strong style="color:var(--text)">最初に1回だけ設定してください。</strong>ブラウザに保存されるので次回から不要です。<br>
+        取得先: <a href="https://console.anthropic.com" target="_blank" style="color:var(--info)">console.anthropic.com</a> → API Keys（<code style="color:var(--accent);font-family:'DM Mono',monospace">sk-ant-...</code>）
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <input type="text" id="apiKeyInput" placeholder="APIキーをここに貼り付け" style="flex:1;font-family:'DM Mono',monospace;font-size:12px">
+        <button class="btn btn-accent" id="btnSaveKey">💾 保存</button>
+        <button class="btn btn-sm btn-danger" id="btnClearKey">✕ 削除</button>
+      </div>
+      <div id="apiKeyStatus" style="font-size:11px;margin-top:8px;font-family:'DM Mono',monospace;min-height:18px">入力してから保存を押してください</div>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" data-tab="url">🔗 URL登録・解析</button>
+    <button class="tab" data-tab="filter">📥 CSV出力</button>
+  </div>
+
+  <<!-- TAB1 -->
+  <div id="tab-url" class="tab-panel active">
+    <div class="card">
+      <div class="sec-title">求人テキストを追加</div>
+      <div class="hint-box">
+        <strong>使い方：</strong> DODAの求人ページを開いて全選択（Ctrl+A）→ コピー（Ctrl+C）→ 下に貼り付け → 「AI解析して追加」ボタン。複数件登録して一括でCSV出力できます。
+      </div>
+      <textarea id="pasteInput" rows="8" placeholder="ここにDODAの求人ページのテキストをそのまま貼り付けてください..."></textarea>
+      <div class="btn-row">
+        <button class="btn btn-accent" id="btnAdd">⚡ AI解析して追加</button>
+        <button class="btn btn-sm btn-danger" id="btnClear">✕ 全クリア</button>
+      </div>
+      <div id="urlErr" class="err-inline hidden"></div>
+    </div>
+    <div class="card">
+      <div class="sec-title" id="listTitle">求人リスト — 0件</div>
+      <div id="jobList">
+        <div class="empty"><span class="ico">📋</span><p>テキストを貼り付けて解析すると一覧が表示されます</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB2 -->
+  <div id="tab-filter" class="tab-panel">
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-lbl">登録件数</div><div class="stat-val" id="statTotal">0</div></div>
+      <div class="stat-card"><div class="stat-lbl">解析済み</div><div class="stat-val" id="statDone">0</div></div>
+      <div class="stat-card"><div class="stat-lbl">出力件数</div><div class="stat-val" id="statFiltered">0</div></div>
+      <div class="stat-card"><div class="stat-lbl">出力列数</div><div class="stat-val">28</div></div>
+    </div>
+
+    <div class="card">
+      <div class="sec-title" id="previewTitle">変換結果プレビュー</div>
+      <div class="tbl-scroll"><table id="previewTable"></table></div>
+    </div>
+
+    <div class="card">
+      <div class="sec-title">CSV出力設定（必須）</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+        <div>
+          <label style="display:block;font-size:10px;font-family:'DM Mono',monospace;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:5px">
+            企業ID <span style="color:var(--danger)">必須</span>
+          </label>
+          <input type="text" id="inputCompanyId" placeholder="キャリアプラス上の企業ID" style="font-family:'DM Mono',monospace">
+        </div>
+        <div>
+          <label style="display:block;font-size:10px;font-family:'DM Mono',monospace;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:5px">
+            部署ID <span style="color:var(--danger)">必須</span>
+          </label>
+          <input type="text" id="inputDeptId" placeholder="キャリアプラス上の部署ID" style="font-family:'DM Mono',monospace">
+        </div>
+      </div>
+      <p style="font-size:11px;color:var(--text2);margin-bottom:14px;line-height:1.7">
+        ※ キャリアプラスの管理画面で確認できます。企業ID・部署IDは必須項目です。
+      </p>
+      <div class="btn-row">
+        <button class="btn btn-accent" id="btnDownload">⬇ CSVをダウンロード</button>
+        <span style="font-size:12px;color:var(--text3);font-family:'DM Mono',monospace" id="dlNote"></span>
+      </div>
+      <p style="font-size:11px;color:var(--text3);margin-top:12px;padding-top:12px;border-top:1px solid var(--border)">
+        ※ 解析済みの全件を出力。BOM付きUTF-8。募集ステータスは固定で「2（募集中）」。
+      </p>
+    </div>
+  </div>
+</div>
+
+<script>
+'use strict';
+
+const CP_FIELDS = [
+  '企業ID','外部向けキャッチフレーズ','ポジション名','WEB掲載用ポジション名','職種1',
+  '職務内容','WEB用職務内容','WEB用募集背景','学歴','必要業務経験','WEB用必要業務経験',
+  'WEB用活かせる経験','WEB用求める人物像','都道府県1','WEB用勤務地コード','市区町村1',
+  '市区町村2','丁目番地号1','その他勤務地','就業時間補足','雇用形態',
+  '年収（下限）','年収（上限）','年収について補足','諸手当・福利厚生','休日休暇',
+  '試用期間について補足','受動喫煙対策について','定年',
+  '転勤・出張（国内・海外、1年以内、頻度など）','雇用期間の定め有無',
+  'ブレインラボ入力欄','部署ID','募集ステータス',
+  '求人：契約更新の有無','求人：更新上限の有無','求人：契約更新の有無コメント','求人：更新上限の有無コメント'
+];
+
+const EMP_MAP = {
+  '正社員':'1','契約社員':'2','派遣社員':'3',
+  'アルバイト・パート':'4','業務委託':'5','紹介予定派遣':'6'
+};
+
+
+const EDU_MAP = {
+  '大学院（MBA含む）':'1','大学院':'1','MBA':'1',
+  '大学':'2','短期大学':'3','短大':'3',
+  '高等専門学校':'4','高専':'4',
+  '専門学校':'5','専門':'5',
+  '高校':'6','高卒':'6','高校以上':'6',
+  '中学校':'7','中学':'7',
+  'その他':'9','不問':'10',
+  '大卒以上':'2','大学以上':'2','短大以上':'3','専門学校以上':'5'
+};
+
+
+const CONTRACT_MAP = {
+  '期間の定めのない雇用契約':'1','無期':'1','期間の定めなし':'1','なし':'1','無':'1',
+  '期間の定めあり':'2','有期':'2','期間の定めあり（更新あり）':'2','あり':'2','有':'2'
+};
+
+
+const PREF_MAP = {
+  '北海道':1,'青森県':2,'岩手県':3,'宮城県':4,'秋田県':5,
+  '山形県':6,'福島県':7,'茨城県':8,'栃木県':9,'群馬県':10,
+  '埼玉県':11,'千葉県':12,'東京都':13,'神奈川県':14,'新潟県':15,
+  '富山県':16,'石川県':17,'福井県':18,'山梨県':19,'長野県':20,
+  '岐阜県':21,'静岡県':22,'愛知県':23,'三重県':24,'滋賀県':25,
+  '京都府':26,'大阪府':27,'兵庫県':28,'奈良県':29,'和歌山県':30,
+  '鳥取県':31,'島根県':32,'岡山県':33,'広島県':34,'山口県':35,
+  '徳島県':36,'香川県':37,'愛媛県':38,'高知県':39,'福岡県':40,
+  '佐賀県':41,'長崎県':42,'熊本県':43,'大分県':44,'宮崎県':45,
+  '鹿児島県':46,'沖縄県':47,'海外':48
+};
+
+
+const JOB_MAP = {
+  '建設/技術職/設計（建築）':'0000','建設/技術職/設計（土木）':'0001',
+  '建設/技術職/設計（設備）':'0002','建設/技術職/設計（プラント）':'0003',
+  '建設/技術職/施工管理（建築）':'0004','建設/技術職/施工管理（土木）':'0005',
+  '建設/技術職/施工管理（設備）':'0006','建設/技術職/施工管理（プラント）':'0007',
+  '建設/技術職/発注者支援':'0008','建設/技術職/設計監理':'0009',
+  '建設/技術職/工事監理':'0010','建設/技術職/積算':'0011',
+  '建設/技術職/プロジェクトマネジメント':'0012','建設/技術職/コンストラクションマネジメント':'0013',
+  '建設/技術職/設備管理':'0014','建設/技術職/保守・メンテナンス':'0015',
+  '建設/技術職/マンションフロント':'0016','建設/技術職/ファシリティマネジメント':'0017',
+  '建設/技術職/その他':'0018','建設/技術職/ビジネス経験なし':'0098',
+  '建設/その他/全般':'0900','建設/その他/その他':'0999',
+  'IT関連/全般/全般':'1000','IT関連/販売/全般':'1100','IT関連/販売/営業':'1101',
+  'IT関連/販売/セールスエンジニア':'1103','IT関連/販売/マーケティング':'1106',
+  'IT関連/販売/経営企画':'1107','IT関連/販売/プリセールス、営業支援':'1110',
+  'IT関連/販売/その他':'1199','IT関連/システムエンジニア（上流）/全般':'1200',
+  'IT関連/システムエンジニア（上流）/プロジェクトマネジャー':'1270',
+  'IT関連/システムエンジニア（上流）/システムコンサルタント':'1271',
+  'IT関連/システムエンジニア（上流）/システムエンジニア（上流）':'1272',
+  'IT関連/システムエンジニア（上流）/その他':'1299',
+  'IT関連/システムエンジニア/全般':'1300',
+  'IT関連/システムエンジニア/オープンシステム設計・開発':'1370',
+  'IT関連/システムエンジニア/汎用系システム開発':'1371',
+  'IT関連/システムエンジニア/WEB系システム設計・開発':'1372',
+  'IT関連/システムエンジニア/金融システム設計・開発':'1373',
+  'IT関連/システムエンジニア/パッケージ・OS設計・開発':'1374',
+  'IT関連/システムエンジニア/ERP・CRM・SCM設計・開発':'1375',
+  'IT関連/システムエンジニア/その他':'1399',
+  'IT関連/N/W・DB・Server/全般':'1400','IT関連/N/W・DB・Server/ネットワークエンジニア':'1470',
+  'IT関連/N/W・DB・Server/データベースエンジニア':'1471',
+  'IT関連/N/W・DB・Server/サーバーエンジニア':'1472',
+  'IT関連/N/W・DB・Server/セキュリティエンジニア':'1473',
+  'IT関連/N/W・DB・Server/運用管理・保守':'1474','IT関連/N/W・DB・Server/その他':'1499',
+  'IT関連/制御系・組込み・ファームウェア/全般':'1500',
+  'IT関連/制御系・組込み・ファームウェア/制御系・組み込み・ファームウェア開発':'1570',
+  'IT関連/制御系・組込み・ファームウェア/画像、グラフィック、通信系ソフト開発':'1571',
+  'IT関連/制御系・組込み・ファームウェア/CAD/CAM/CAE/CIM':'1572',
+  'IT関連/制御系・組込み・ファームウェア/その他':'1599',
+  'IT関連/社内SE・サポート/全般':'1600','IT関連/社内SE・サポート/社内SE、EDP、MIS':'1670',
+  'IT関連/社内SE・サポート/テクニカルサポート、ヘルプデスク':'1671',
+  'IT関連/社内SE・サポート/その他':'1699','IT関連/その他/全般':'1900',
+  'IT関連/その他/インストラクター・技術教育':'1970',
+  'IT関連/その他/テクニカルライター、技術翻訳':'1971',
+  'IT関連/その他/テスティング、ローカライズ':'1972',
+  'IT関連/その他/Web制作・デザイン':'1973','IT関連/その他/その他':'1999',
+  '電気・電子・機械・メカトロ・化学関連/全般/全般':'2000',
+  '電気・電子・機械・メカトロ・化学関連/全般/営業':'2001',
+  '電気・電子・機械・メカトロ・化学関連/全般/海外営業':'2002',
+  '電気・電子・機械・メカトロ・化学関連/全般/セールスエンジニア':'2003',
+  '電気・電子・機械・メカトロ・化学関連/全般/マーケティング':'2006',
+  '電気・電子・機械・メカトロ・化学関連/全般/経営企画':'2007',
+  '電気・電子・機械・メカトロ・化学関連/全般/商品開発':'2008',
+  '電気・電子・機械・メカトロ・化学関連/全般/製造技術・生産管理':'2009',
+  '電気・電子・機械・メカトロ・化学関連/全般/品質管理・品質保証':'2020',
+  '電気・電子・機械・メカトロ・化学関連/全般/研究・開発':'2021',
+  '電気・電子・機械・メカトロ・化学関連/全般/設計':'2022',
+  '電気・電子・機械・メカトロ・化学関連/全般/実験・評価・解析':'2023',
+  '電気・電子・機械・メカトロ・化学関連/全般/FAE・技術サポートエンジニア':'2024',
+  '電気・電子・機械・メカトロ・化学関連/全般/購買・資材調達':'2025',
+  '電気・電子・機械・メカトロ・化学関連/全般/その他':'2099',
+  '電気・電子・機械・メカトロ・化学関連/電気・電子・半導体関連/全般':'2100',
+  '電気・電子・機械・メカトロ・化学関連/電気・電子・半導体関連/営業':'2101',
+  '電気・電子・機械・メカトロ・化学関連/電気・電子・半導体関連/海外営業':'2102',
+  '電気・電子・機械・メカトロ・化学関連/電気・電子・半導体関連/セールスエンジニア':'2103',
+  '電気・電子・機械・メカトロ・化学関連/電気・電子・半導体関連/マーケティング':'2106',
+  '電気・電子・機械・メカトロ・化学関連/電気・電子・半導体関連/経営企画':'2107',
+  '電気・電子・機械・メカトロ・化学関連/電気・電子・半導体関連/商品開発':'2108',
+  '電気・電子・機械・メカトロ・化学関連/電気・電子・半導体関連/製造技術・生産管理':'2109',
+  '電気・電子・機械・メカトロ・化学関連/電気・電子・半導体関連/品質管理・品質保証':'2120',
+  '電気・電子・機械・メカトロ・化学関連/電気・電子・半導体関連/研究・開発':'2121',
+  '電気・電子・機械・メカトロ・化学関連/電気・電子・半導体関連/設計':'2122',
+  '電気・電子・機械・メカトロ・化学関連/電気・電子・半導体関連/実験・評価・解析':'2123',
+  '電気・電子・機械・メカトロ・化学関連/電気・電子・半導体関連/FAE・技術サポートエンジニア':'2124',
+  '電気・電子・機械・メカトロ・化学関連/電気・電子・半導体関連/購買・資材調達':'2125',
+  '電気・電子・機械・メカトロ・化学関連/電気・電子・半導体関連/その他':'2199',
+  '電気・電子・機械・メカトロ・化学関連/機械・プラント・自動車・輸送機器/全般':'2200',
+  '電気・電子・機械・メカトロ・化学関連/機械・プラント・自動車・輸送機器/営業':'2201',
+  '電気・電子・機械・メカトロ・化学関連/機械・プラント・自動車・輸送機器/海外営業':'2202',
+  '電気・電子・機械・メカトロ・化学関連/機械・プラント・自動車・輸送機器/セールスエンジニア':'2203',
+  '電気・電子・機械・メカトロ・化学関連/機械・プラント・自動車・輸送機器/マーケティング':'2206',
+  '電気・電子・機械・メカトロ・化学関連/機械・プラント・自動車・輸送機器/経営企画':'2207',
+  '電気・電子・機械・メカトロ・化学関連/機械・プラント・自動車・輸送機器/商品開発':'2208',
+  '電気・電子・機械・メカトロ・化学関連/機械・プラント・自動車・輸送機器/製造技術・生産管理':'2209',
+  '電気・電子・機械・メカトロ・化学関連/機械・プラント・自動車・輸送機器/品質管理・品質保証':'2220',
+  '電気・電子・機械・メカトロ・化学関連/機械・プラント・自動車・輸送機器/研究・開発':'2221',
+  '電気・電子・機械・メカトロ・化学関連/機械・プラント・自動車・輸送機器/設計':'2222',
+  '電気・電子・機械・メカトロ・化学関連/機械・プラント・自動車・輸送機器/実験・評価・解析':'2223',
+  '電気・電子・機械・メカトロ・化学関連/機械・プラント・自動車・輸送機器/FAE・技術サポートエンジニア':'2224',
+  '電気・電子・機械・メカトロ・化学関連/機械・プラント・自動車・輸送機器/購買・資材調達':'2225',
+  '電気・電子・機械・メカトロ・化学関連/機械・プラント・自動車・輸送機器/その他':'2299',
+  '電気・電子・機械・メカトロ・化学関連/化学・素材/全般':'2300',
+  '電気・電子・機械・メカトロ・化学関連/化学・素材/営業':'2301',
+  '電気・電子・機械・メカトロ・化学関連/化学・素材/海外営業':'2302',
+  '電気・電子・機械・メカトロ・化学関連/化学・素材/セールスエンジニア':'2303',
+  '電気・電子・機械・メカトロ・化学関連/化学・素材/マーケティング':'2306',
+  '電気・電子・機械・メカトロ・化学関連/化学・素材/経営企画':'2307',
+  '電気・電子・機械・メカトロ・化学関連/化学・素材/商品開発':'2308',
+  '電気・電子・機械・メカトロ・化学関連/化学・素材/製造技術・生産管理':'2309',
+  '電気・電子・機械・メカトロ・化学関連/化学・素材/品質管理・品質保証':'2320',
+  '電気・電子・機械・メカトロ・化学関連/化学・素材/研究・開発':'2321',
+  '電気・電子・機械・メカトロ・化学関連/化学・素材/設計':'2322',
+  '電気・電子・機械・メカトロ・化学関連/化学・素材/実験・評価・解析':'2323',
+  '電気・電子・機械・メカトロ・化学関連/化学・素材/FAE・技術サポートエンジニア':'2324',
+  '電気・電子・機械・メカトロ・化学関連/化学・素材/購買・資材調達':'2325',
+  '電気・電子・機械・メカトロ・化学関連/化学・素材/その他':'2399',
+  '電気・電子・機械・メカトロ・化学関連/その他/全般':'2900',
+  '電気・電子・機械・メカトロ・化学関連/その他/その他':'2999',
+  'メディカル関連/全般/全般':'3000','メディカル関連/製薬/全般':'3100',
+  'メディカル関連/製薬/営業':'3101','メディカル関連/製薬/海外営業':'3102',
+  'メディカル関連/製薬/セールスエンジニア':'3103','メディカル関連/製薬/マーケティング':'3106',
+  'メディカル関連/製薬/経営企画':'3107','メディカル関連/製薬/生産管理・生産技術':'3109',
+  'メディカル関連/製薬/品質管理・品質保証':'3120','メディカル関連/製薬/研究開発':'3121',
+  'メディカル関連/製薬/MR':'3130','メディカル関連/製薬/臨床開発':'3131',
+  'メディカル関連/製薬/その他':'3199','メディカル関連/医療機器・用具/全般':'3200',
+  'メディカル関連/医療機器・用具/営業':'3201','メディカル関連/医療機器・用具/海外営業':'3202',
+  'メディカル関連/医療機器・用具/セールスエンジニア':'3203',
+  'メディカル関連/医療機器・用具/マーケティング':'3206',
+  'メディカル関連/医療機器・用具/経営企画':'3207',
+  'メディカル関連/医療機器・用具/生産管理・生産技術':'3209',
+  'メディカル関連/医療機器・用具/品質管理・品質保証':'3220',
+  'メディカル関連/医療機器・用具/研究開発':'3221',
+  'メディカル関連/医療機器・用具/FAE・技術サポートエンジニア':'3224',
+  'メディカル関連/医療機器・用具/臨床開発':'3231','メディカル関連/医療機器・用具/その他':'3299',
+  'メディカル関連/バイオ・ゲノム・食品/全般':'3300','メディカル関連/バイオ・ゲノム・食品/営業':'3301',
+  'メディカル関連/バイオ・ゲノム・食品/海外営業':'3302',
+  'メディカル関連/バイオ・ゲノム・食品/セールスエンジニア':'3303',
+  'メディカル関連/バイオ・ゲノム・食品/マーケティング':'3306',
+  'メディカル関連/バイオ・ゲノム・食品/経営企画':'3307',
+  'メディカル関連/バイオ・ゲノム・食品/生産管理・生産技術':'3309',
+  'メディカル関連/バイオ・ゲノム・食品/品質管理・品質保証':'3320',
+  'メディカル関連/バイオ・ゲノム・食品/研究開発':'3321',
+  'メディカル関連/バイオ・ゲノム・食品/FAE・技術サポートエンジニア':'3324',
+  'メディカル関連/バイオ・ゲノム・食品/臨床開発':'3331',
+  'メディカル関連/バイオ・ゲノム・食品/その他':'3399',
+  'メディカル関連/医師・看護師・薬剤師・検査技師/全般':'3400',
+  'メディカル関連/医師・看護師・薬剤師・検査技師/医師・歯科医師':'3470',
+  'メディカル関連/医師・看護師・薬剤師・検査技師/看護師':'3471',
+  'メディカル関連/医師・看護師・薬剤師・検査技師/検査技師':'3472',
+  'メディカル関連/医師・看護師・薬剤師・検査技師/薬剤師':'3473',
+  'メディカル関連/医師・看護師・薬剤師・検査技師/その他':'3499',
+  'メディカル関連/その他/全般':'3900','メディカル関連/その他/その他':'3999',
+  '金融関連/全般/全般':'4000','金融関連/全般/営業':'4001',
+  '金融関連/全般/マーケティング':'4006','金融関連/全般/経営企画':'4007',
+  '金融関連/全般/商品開発':'4008','金融関連/全般/運用業務':'4040',
+  '金融関連/全般/バック・ミドルオフィス':'4041',
+  '金融関連/銀行・信託銀行/全般':'4100','金融関連/銀行・信託銀行/営業':'4101',
+  '金融関連/銀行・信託銀行/個人営業':'4104','金融関連/銀行・信託銀行/マーケティング':'4106',
+  '金融関連/銀行・信託銀行/経営企画':'4107','金融関連/銀行・信託銀行/商品開発':'4108',
+  '金融関連/銀行・信託銀行/運用業務':'4140','金融関連/銀行・信託銀行/バック・ミドルオフィス':'4141',
+  '金融関連/銀行・信託銀行/トレーディング':'4142','金融関連/銀行・信託銀行/投資銀行・M＆A業務':'4143',
+  '金融関連/銀行・信託銀行/その他':'4199',
+  '金融関連/証券/全般':'4200','金融関連/証券/営業':'4201','金融関連/証券/個人営業':'4204',
+  '金融関連/証券/マーケティング':'4206','金融関連/証券/経営企画':'4207',
+  '金融関連/証券/商品開発':'4208','金融関連/証券/運用業務':'4240',
+  '金融関連/証券/バック・ミドルオフィス':'4241','金融関連/証券/トレーディング':'4242',
+  '金融関連/証券/投資銀行・M＆A業務':'4243','金融関連/証券/その他':'4299',
+  '金融関連/投信・投資顧問/全般':'4300','金融関連/投信・投資顧問/営業':'4301',
+  '金融関連/投信・投資顧問/マーケティング':'4306','金融関連/投信・投資顧問/経営企画':'4307',
+  '金融関連/投信・投資顧問/商品開発':'4308','金融関連/投信・投資顧問/運用業務':'4340',
+  '金融関連/投信・投資顧問/バック・ミドルオフィス':'4341',
+  '金融関連/投信・投資顧問/トレーディング':'4342','金融関連/投信・投資顧問/その他':'4399',
+  '金融関連/生保/全般':'4400','金融関連/生保/営業':'4401','金融関連/生保/個人営業':'4404',
+  '金融関連/生保/マーケティング':'4406','金融関連/生保/経営企画':'4407',
+  '金融関連/生保/商品開発':'4408','金融関連/生保/運用業務':'4440',
+  '金融関連/生保/バック・ミドルオフィス':'4441','金融関連/生保/アンダーライター・支払':'4443',
+  '金融関連/生保/その他':'4499',
+  '金融関連/損保/全般':'4500','金融関連/損保/営業':'4501','金融関連/損保/個人営業':'4504',
+  '金融関連/損保/マーケティング':'4506','金融関連/損保/経営企画':'4507',
+  '金融関連/損保/商品開発':'4508','金融関連/損保/運用業務':'4540',
+  '金融関連/損保/バック・ミドルオフィス':'4541','金融関連/損保/アンダーライター・支払':'4543',
+  '金融関連/損保/損害調査':'4570','金融関連/損保/その他':'4599',
+  '金融関連/リース・信販・ノンバンク・VC・不動産金融/全般':'4600',
+  '金融関連/リース・信販・ノンバンク・VC・不動産金融/営業':'4601',
+  '金融関連/リース・信販・ノンバンク・VC・不動産金融/マーケティング':'4606',
+  '金融関連/リース・信販・ノンバンク・VC・不動産金融/経営企画':'4607',
+  '金融関連/リース・信販・ノンバンク・VC・不動産金融/商品開発':'4608',
+  '金融関連/リース・信販・ノンバンク・VC・不動産金融/運用業務':'4640',
+  '金融関連/リース・信販・ノンバンク・VC・不動産金融/バック・ミドルオフィス':'4641',
+  '金融関連/リース・信販・ノンバンク・VC・不動産金融/その他':'4699',
+  '金融関連/監査法人・税理士事務所/全般':'4700','金融関連/監査法人・税理士事務所/監査':'4770',
+  '金融関連/監査法人・税理士事務所/税務':'4771',
+  '金融関連/監査法人・税理士事務所/ビジネスアドバイザリー':'4772',
+  '金融関連/監査法人・税理士事務所/IT関連':'4773',
+  '金融関連/監査法人・税理士事務所/その他':'4799',
+  '金融関連/その他/全般':'4900','金融関連/その他/その他':'4999',
+  'コンサルティング関連/全般/全般':'5000','コンサルティング関連/コンサルティング/全般':'5100',
+  'コンサルティング関連/コンサルティング/リサーチャー/アナリスト':'5106',
+  'コンサルティング関連/コンサルティング/経営戦略コンサルタント':'5170',
+  'コンサルティング関連/コンサルティング/物流・生産コンサルタント':'5171',
+  'コンサルティング関連/コンサルティング/人事・組織コンサルタント':'5172',
+  'コンサルティング関連/コンサルティング/財務・会計コンサルタント':'5173',
+  'コンサルティング関連/コンサルティング/営業・販促コンサルタント':'5174',
+  'コンサルティング関連/コンサルティング/業務改善コンサルタント':'5175',
+  'コンサルティング関連/コンサルティング/その他コンサルタント':'5199',
+  'コンサルティング関連/その他/全般':'5900','コンサルティング関連/その他/その他':'5999',
+  'その他関連/全般/全般':'6000','その他関連/建設・設備・不動産/全般':'6100',
+  'その他関連/建設・設備・不動産/営業':'6101',
+  'その他関連/建設・設備・不動産/セールスエンジニア':'6103',
+  'その他関連/建設・設備・不動産/マーケティング':'6106',
+  'その他関連/建設・設備・不動産/経営企画':'6107',
+  'その他関連/建設・設備・不動産/設計':'6170',
+  'その他関連/建設・設備・不動産/施工管理':'6171',
+  'その他関連/建設・設備・不動産/不動産鑑定・デューデリジェンス':'6172',
+  'その他関連/建設・設備・不動産/プロパティ・アセットマネジメント':'6173',
+  'その他関連/建設・設備・不動産/その他':'6199',
+  'その他関連/流通・サービス・外食全般/全般':'6200',
+  'その他関連/流通・サービス・外食全般/営業':'6201',
+  'その他関連/流通・サービス・外食全般/マーケティング':'6206',
+  'その他関連/流通・サービス・外食全般/経営企画':'6207',
+  'その他関連/流通・サービス・外食全般/商品開発':'6208',
+  'その他関連/流通・サービス・外食全般/生産管理':'6209',
+  'その他関連/流通・サービス・外食全般/販売・接客':'6260',
+  'その他関連/流通・サービス・外食全般/店長・店舗管理':'6261',
+  'その他関連/流通・サービス・外食全般/スーパーバイザー':'6262',
+  'その他関連/流通・サービス・外食全般/店舗開発・FC開発・オーナー募集':'6263',
+  'その他関連/流通・サービス・外食全般/マーチャンダイザー・バイヤー':'6264',
+  'その他関連/流通・サービス・外食全般/旅客サービス、ホテル':'6270',
+  'その他関連/流通・サービス・外食全般/コールセンタ':'6271',
+  'その他関連/流通・サービス・外食全般/その他':'6299',
+  'その他関連/アパレル・日用雑貨/全般':'6300','その他関連/アパレル・日用雑貨/営業':'6301',
+  'その他関連/アパレル・日用雑貨/マーケティング':'6306',
+  'その他関連/アパレル・日用雑貨/経営企画':'6307',
+  'その他関連/アパレル・日用雑貨/商品開発':'6308',
+  'その他関連/アパレル・日用雑貨/生産管理':'6309',
+  'その他関連/アパレル・日用雑貨/販売・接客':'6360',
+  'その他関連/アパレル・日用雑貨/店長・店舗管理':'6361',
+  'その他関連/アパレル・日用雑貨/スーパーバイザー':'6362',
+  'その他関連/アパレル・日用雑貨/店舗開発・FC開発・オーナー募集':'6363',
+  'その他関連/アパレル・日用雑貨/マーチャンダイザー・バイヤー':'6364',
+  'その他関連/アパレル・日用雑貨/その他':'6399',
+  'その他関連/商社/全般':'6400','その他関連/商社/国内営業':'6401',
+  'その他関連/商社/海外営業':'6402','その他関連/商社/物流':'6470',
+  'その他関連/商社/その他':'6499','その他関連/クリエイティブ/全般':'6500',
+  'その他関連/クリエイティブ/ディレクター・ライター・編集':'6570',
+  'その他関連/クリエイティブ/デザイナー・イラストレーター・クリエイター・CG':'6571',
+  'その他関連/クリエイティブ/DTP・製版・印刷関連':'6572',
+  'その他関連/クリエイティブ/その他':'6599',
+  'その他関連/その他/全般':'6900','その他関連/その他/通訳、翻訳':'6970',
+  'その他関連/その他/講師、教員':'6971','その他関連/その他/福祉、介護':'6972',
+  'その他関連/その他/その他':'6999',
+  '管理/全般/全般':'7000','管理/経理・財務/全般':'7100','管理/経理・財務/財務':'7170',
+  '管理/経理・財務/経理':'7171','管理/経理・財務/税務':'7172',
+  '管理/経理・財務/英文経理事務':'7173','管理/経理・財務/経理・財務マネージャー':'7180',
+  '管理/経理・財務/その他':'7199','管理/人事・総務/全般':'7200',
+  '管理/人事・総務/総務':'7270','管理/人事・総務/人事':'7271',
+  '管理/人事・総務/採用・研修':'7272','管理/人事・総務/給与・社保':'7273',
+  '管理/人事・総務/総務・人事マネージャー':'7280','管理/人事・総務/その他':'7299',
+  '管理/法務・知財/全般':'7300','管理/法務・知財/法務':'7370',
+  '管理/法務・知財/知財（特許）':'7371','管理/法務・知財/内部統制・内部監査':'7372',
+  '管理/法務・知財/法務・知財マネージャー':'7380','管理/法務・知財/その他':'7399',
+  '管理/広報・IR/全般':'7400','管理/広報・IR/広報、広告宣伝':'7470',
+  '管理/広報・IR/IR':'7471','管理/広報・IR/広報・IRマネージャー':'7480',
+  '管理/広報・IR/その他':'7499','管理/秘書・アドミ/全般':'7500',
+  '管理/秘書・アドミ/営業事務（受発注業務）':'7570','管理/秘書・アドミ/一般事務':'7571',
+  '管理/秘書・アドミ/貿易事務':'7572','管理/秘書・アドミ/英文事務':'7573',
+  '管理/秘書・アドミ/秘書・受付':'7574',
+  '管理/秘書・アドミ/グループセクレタリー、各種アシスタント':'7575',
+  '管理/秘書・アドミ/その他':'7599','管理/エグゼクティブ/全般':'7600',
+  '管理/エグゼクティブ/CEO・COO':'7670','管理/エグゼクティブ/CFO':'7671',
+  '管理/エグゼクティブ/CIO':'7672','管理/エグゼクティブ/監査役':'7673',
+  '管理/エグゼクティブ/社外取締役':'7674','管理/エグゼクティブ/顧問':'7675',
+  '管理/エグゼクティブ/その他':'7699','管理/その他/全般':'7900',
+  '管理/その他/その他':'7999'
+};
+
+
+const SYS = `以下のDODAの求人テキストを読み込み、キャリアプラス（ブレインラボ）インポート用のJSONを作成してください。
+JSONのみ出力してください（説明文・マークダウン不要）。存在しない情報は空文字にしてください。
+
+【出力するJSONのキーと抽出ルール】
+・企業ID: 空文字
+・外部向けキャッチフレーズ: ページ上部のキャッチコピーや求人の特徴にあたる文章を**50文字以内**で簡潔に要約して出力
+・ポジション名: ページ上部の職種名
+・WEB掲載用ポジション名: ページ上部の職種名
+・職種1: 職種名を元に最も近い職種カテゴリ名をスラッシュ区切りで出力。建設系の例：建設/技術職/施工管理（建築）、建設/技術職/施工管理（土木）、建設/技術職/施工管理（設備）、建設/技術職/設計（建築）、建設/技術職/設計（土木）、建設/技術職/積算、建設/技術職/その他。必ず既存マスタの名称を使うこと。BIM・DX・構造設計など該当なければ建設/技術職/その他を使用
+・職務内容: 【仕事内容】のテキストを**1000文字以内**で要約して出力
+・WEB用職務内容: 【仕事内容】のテキストを**1000文字以内**で要約して出力
+・WEB用募集背景: 記載があれば抽出、なければ空文字
+・学歴: 【対象となる方】から学歴要件を以下から選んで出力（大学院（MBA含む）/大学/短期大学/高等専門学校/専門学校/高校/中学校/その他/不問）
+・必要業務経験: 【対象となる方】から必須の経験・スキルを**500文字以内**で要約して出力
+・WEB用必要業務経験: 【対象となる方】から必須の経験・スキルを**500文字以内**で要約して出力
+・WEB用活かせる経験: 【対象となる方】から歓迎・活かせる経験・スキル
+・WEB用求める人物像: 【対象となる方】から人物像に関する記載
+・都道府県1: 【勤務地】から都道府県名のみ（例：東京都）※名称のまま出力してください
+・WEB用勤務地コード: 空文字
+・市区町村1: 【勤務地】から市区町村名のみ（例：千代田区）
+・市区町村2: 記載があれば抽出、なければ空文字
+・丁目番地号1: 空文字
+・その他勤務地: 【勤務地】のテキストをそのまま（市区町村以降の住所とアクセス情報）
+・就業時間補足: 【勤務時間】のテキスト
+・雇用形態: 以下から選んで出力（正社員/契約社員/派遣社員/アルバイト・パート/業務委託/紹介予定派遣）
+・年収（下限）: 【給与】や【想定年収】から下限金額を万円単位の数値のみ（例：400）
+・年収（上限）: 【給与】や【想定年収】から上限金額を万円単位の数値のみ（例：600）
+・年収について補足: 【給与】の昇給・賞与・年収例などを**200文字以内**で要約して出力
+・諸手当・福利厚生: 【待遇・福利厚生】のテキストを**500文字以内**で要約して出力
+・休日休暇: 【休日・休暇】のテキストを**300文字以内**で要約して出力
+・試用期間について補足: 試用期間の記載があれば抽出
+・受動喫煙対策について: 受動喫煙防止策の記載があれば抽出
+・定年: 定年退職に関する記載があれば抽出、なければ空文字
+・転勤・出張（国内・海外、1年以内、頻度など）: 転勤の有無に関する記載
+・雇用期間の定め有無: 以下から選んで出力（期間の定めのない雇用契約/期間の定めあり）正社員は「期間の定めのない雇用契約」
+・ブレインラボ入力欄: 空文字
+・部署ID: 空文字
+・募集ステータス: 「募集中」と出力
+・求人：契約更新の有無: 記載があれば抽出、なければ空文字
+・求人：更新上限の有無: 記載があれば抽出、なければ空文字
+・求人：契約更新の有無コメント: 記載があれば抽出、なければ空文字
+・求人：更新上限の有無コメント: 記載があれば抽出、なければ空文字`;
+
+function convertMasters(parsed, companyId, deptId) {
+  const out = Object.assign({}, parsed);
+
+  // 都道府県 → ID
+  const prefName = (out['都道府県1'] || '').trim();
+  if (prefName && PREF_MAP[prefName]) out['都道府県1'] = String(PREF_MAP[prefName]);
+
+  // 職種 → ID（マスタ外の場合はキーワードで近似マッピング）
+  const jobName = (out['職種1'] || '').trim();
+  if (jobName) {
+    if (JOB_MAP[jobName]) {
+      out['職種1'] = String(JOB_MAP[jobName]);
+    } else {
+      // キーワードで近似マッピング
+      const jn = jobName;
+      let mapped = '';
+      if (/施工管理.*土木|土木.*施工/.test(jn))       mapped = '0005';
+      else if (/施工管理.*建築|建築.*施工/.test(jn))    mapped = '0004';
+      else if (/施工管理.*設備|設備.*施工/.test(jn))    mapped = '0006';
+      else if (/施工管理.*電気|電気.*施工/.test(jn))    mapped = '0006';
+      else if (/施工管理.*管工事|管工事/.test(jn))      mapped = '0006';
+      else if (/施工管理.*プラント|プラント.*施工/.test(jn)) mapped = '0007';
+      else if (/施工管理/.test(jn))                     mapped = '0004';
+      else if (/設計.*建築|建築.*設計|意匠設計|構造設計/.test(jn)) mapped = '0000';
+      else if (/設計.*土木|土木.*設計/.test(jn))        mapped = '0001';
+      else if (/設計.*設備|設備.*設計/.test(jn))        mapped = '0002';
+      else if (/設計.*プラント|プラント.*設計/.test(jn)) mapped = '0003';
+      else if (/積算/.test(jn))                         mapped = '0011';
+      else if (/設計監理|監理/.test(jn))                mapped = '0009';
+      else if (/工事監理/.test(jn))                     mapped = '0010';
+      else if (/発注者支援/.test(jn))                   mapped = '0008';
+      else if (/設備管理/.test(jn))                     mapped = '0014';
+      else if (/メンテナンス|保守/.test(jn))            mapped = '0015';
+      else if (/BIM|DX|デジタル/.test(jn))              mapped = '0018';
+      else if (/プロジェクトマネ|PM/.test(jn))          mapped = '0012';
+      else if (/CM|コンストラクション/.test(jn))        mapped = '0013';
+      else if (/マンションフロント/.test(jn))           mapped = '0016';
+      else if (/ファシリティ/.test(jn))                 mapped = '0017';
+      else if (/建設|建築|土木|設計|施工/.test(jn))     mapped = '0018';
+      if (mapped) out['職種1'] = mapped;
+      // マッピング不可の場合はそのままにして後で確認できるようにする
+    }
+  }
+
+  // 雇用形態 → ID
+  const empName = (out['雇用形態'] || '').trim();
+  if (empName) out['雇用形態'] = EMP_MAP[empName] || out['雇用形態'];
+
+  // 学歴 → ID
+  const eduName = (out['学歴'] || '').trim();
+  if (eduName) out['学歴'] = EDU_MAP[eduName] || out['学歴'];
+
+  // 雇用期間の定め有無 → ID
+  const contName = (out['雇用期間の定め有無'] || '').trim();
+  if (contName) out['雇用期間の定め有無'] = CONTRACT_MAP[contName] || out['雇用期間の定め有無'];
+
+  // 年収 万円 → 円に変換
+  ['年収（下限）','年収（上限）'].forEach(key => {
+    const v = out[key];
+    if (v !== '' && v !== null && v !== undefined) {
+      const num = parseFloat(String(v).replace(/[^\d.]/g, ''));
+      if (!isNaN(num)) out[key] = String(Math.round(num * 10000));
+    }
+  });
+
+  // 募集ステータス → 固定で2
+  out['募集ステータス'] = '2';
+
+  // 企業ID・部署ID
+  out['企業ID'] = companyId || '';
+  out['部署ID'] = deptId || '';
+
+  // 文字数フォールバック（Shift-JISバイト数基準）
+  // 日本語1文字=2バイト、英数字=1バイトで計算
+  function sjisBytes(str) {
+    let b = 0;
+    for (const c of str) { b += c.charCodeAt(0) > 127 ? 2 : 1; }
+    return b;
+  }
+  function cutByBytes(str, maxBytes) {
+    if (!str) return str;
+    let b = 0, i = 0;
+    for (i = 0; i < str.length; i++) {
+      b += str.charCodeAt(i) > 127 ? 2 : 1;
+      if (b > maxBytes) break;
+    }
+    return str.slice(0, i);
+  }
+  // バイト上限マップ（Shift-JIS換算）
+  const byteLimits = {
+    '外部向けキャッチフレーズ': 100,
+    '職務内容': 4000, 'WEB用職務内容': 4000,
+    '必要業務経験': 2000, 'WEB用必要業務経験': 2000,
+    '年収について補足': 400,
+    '諸手当・福利厚生': 2000, '休日休暇': 600
+  };
+  Object.entries(byteLimits).forEach(([key, limit]) => {
+    if (out[key] && sjisBytes(out[key]) > limit) {
+      out[key] = cutByBytes(out[key], limit);
+    }
+  });
+
+  return out;
+}
+
+
+
+// ── State ──
+// localStorage フォールバック（file://環境対応）
+const store = (() => {
+  try { localStorage.setItem('_test', '1'); localStorage.removeItem('_test'); return localStorage; }
+  catch(e) {
+    const mem = {};
+    return { getItem: k => mem[k]||null, setItem: (k,v) => { mem[k]=v; }, removeItem: k => { delete mem[k]; } };
+  }
+})();
+
+let jobs = JSON.parse(store.getItem('doda_jobs') || '[]');
+function save() { try { store.setItem('doda_jobs', JSON.stringify(jobs)); } catch(e) {} }
+function ts() { return new Date().toLocaleTimeString('ja-JP',{hour:'2-digit',minute:'2-digit',second:'2-digit'}); }
+
+// ── Boot ──
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.tab').forEach(t =>
+    t.addEventListener('click', () => switchTab(t.dataset.tab))
+  );
+  document.getElementById('btnAdd')?.addEventListener('click', addAndAnalyze);
+  document.getElementById('btnClear')?.addEventListener('click', clearAll);
+  document.getElementById('btnDownload')?.addEventListener('click', downloadCSV);
+  // フィルターリセットボタン（未使用）
+  // フィルターUI削除済みのためリスナー不要
+
+  // APIキー
+  initApiKey();
+
+  renderList();
+  updateHeaderCount();
+});
+
+// ── Tab ──
+function switchTab(name) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === name));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  if (name === 'filter') { buildSelects(); applyFilters(); }
+}
+
+// ── テキスト追加 & 解析 ──
+async function addAndAnalyze() {
+  const text = document.getElementById('pasteInput').value.trim();
+  const errEl = document.getElementById('urlErr');
+  errEl.classList.add('hidden');
+  if (!text) { showErr('テキストを貼り付けてください'); return; }
+  if (!getApiKey()) { alert('APIキーが設定されていません。\nページ上部の設定欄にAnthropicのAPIキーを入力してください。'); return; }
+
+  const job = {
+    id: Date.now() + '_' + Math.random(),
+    text,
+    parsed: null,
+    status: 'analyzing',
+    logs: [],
+    progress: 0,
+    error: ''
+  };
+  jobs.push(job);
+  document.getElementById('pasteInput').value = '';
+  save(); renderList(); updateHeaderCount();
+  await analyzeJob(job.id);
+}
+
+async function clearAll() {
+  if (jobs.length && !confirm('すべての求人を削除しますか？')) return;
+  jobs = []; save(); renderList(); updateHeaderCount();
+}
+
+// ── AI解析 ──
+function pushLog(job, msg, type='') {
+  job.logs.push({ ts: ts(), msg, type });
+  if (job.logs.length > 8) job.logs = job.logs.slice(-8);
+}
+
+async function analyzeJob(id) {
+  const job = jobs.find(j => j.id === id);
+  if (!job) return;
+  job.logs = []; job.error = '';
+  job.status = 'analyzing'; job.progress = 20;
+  pushLog(job, 'Claude AIに送信中...', 'run');
+  refreshCard(job); save();
+
+  try {
+    job.progress = 40; refreshCard(job);
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': getApiKey(),
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 4000,
+        system: SYS,
+        messages: [{ role: 'user', content: '以下のDODA求人テキストをキャリアプラス形式のJSONに変換:\n\n' + job.text.slice(0, 8000) }]
+      })
+    });
+    job.progress = 75; pushLog(job, 'レスポンス受信・解析中...', 'run'); refreshCard(job);
+    const data = await resp.json();
+    if (!resp.ok) throw new Error(data.error?.message || 'API Error ' + resp.status);
+    const txt = (data.content || []).map(c => c.text || '').join('');
+    pushLog(job, 'AI応答 ' + txt.length + '文字', 'run'); refreshCard(job);
+
+    let jsonStr = null;
+    const fenceMatch = txt.match(/```(?:json)?\s*([\s\S]*?)```/);
+    if (fenceMatch) {
+      jsonStr = fenceMatch[1].trim();
+    } else {
+      const braceStart = txt.indexOf('{');
+      if (braceStart !== -1) {
+        let raw = txt.slice(braceStart);
+        const lastComplete = raw.search(/,\s*"[^"]*"\s*:\s*(?:"[^"]*"|[0-9]+)\s*$/);
+        if (lastComplete !== -1) raw = raw.slice(0, lastComplete) + '\n}';
+        else if (!raw.trimEnd().endsWith('}')) {
+          raw = raw.replace(/,\s*$/, '').replace(/"[^"]*"\s*:\s*"[^"]*$/, '').trimEnd();
+          if (!raw.endsWith('}')) raw += '\n}';
+        }
+        jsonStr = raw;
+      }
+    }
+    if (!jsonStr) {
+      pushLog(job, '生レスポンス: ' + txt.slice(0,200), 'err');
+      throw new Error('JSON未検出。応答: ' + txt.slice(0,120));
+    }
+    job.parsed = JSON.parse(jsonStr);
+    job.status = 'done'; job.progress = 100;
+    pushLog(job, '完了 ✓ ' + (job.parsed['外部向けキャッチフレーズ'] || job.parsed['ポジション名'] || ''), 'ok');
+  } catch(e) {
+    job.status = 'error'; job.error = e.message; job.progress = 0;
+    pushLog(job, 'エラー: ' + e.message, 'err');
+  }
+  refreshCard(job); save(); updateHeaderCount(); updateTab2Stats();
+}
+
+// ── レンダリング ──
+function renderList() {
+  const el = document.getElementById('jobList');
+  document.getElementById('listTitle').textContent = '求人リスト — ' + jobs.length + '件';
+  if (!jobs.length) {
+    el.innerHTML = '<div class="empty"><span class="ico">📋</span><p>テキストを貼り付けて解析すると一覧が表示されます</p></div>';
+    return;
+  }
+  el.innerHTML = '';
+  const list = document.createElement('div');
+  list.className = 'job-list';
+  jobs.forEach(job => {
+    const div = document.createElement('div');
+    div.id = 'jc-' + job.id;
+    buildJobCard(div, job);
+    list.appendChild(div);
+  });
+  el.appendChild(list);
+}
+
+function refreshCard(job) {
+  const el = document.getElementById('jc-' + job.id);
+  if (el) buildJobCard(el, job); else renderList();
+}
+
+function buildJobCard(el, job) {
+  const stMap = { analyzing:'AI解析中...', done:'解析完了', error:'エラー' };
+  const stCls  = { analyzing:'st-analyzing', done:'st-done', error:'st-error' };
+  const p = job.parsed || {};
+  const title = p['外部向けキャッチフレーズ'] || p['ポジション名'] || '（解析中）';
+  const pref  = p['都道府県1'] || '';
+  const emp   = p['雇用形態'] || '';
+  const salLo = p['年収（下限）'] || '';
+  const salHi = p['年収（上限）'] || '';
+  const sal   = (salLo || salHi) ? [salLo, salHi].filter(Boolean).join('〜') + '万円' : '';
+  const isActive = job.status === 'analyzing';
+  const pct = job.progress || 0;
+
+  el.className = 'job-card' +
+    (job.status === 'done' ? ' done' : '') +
+    (job.status === 'analyzing' ? ' analyzing' : '') +
+    (job.status === 'error' ? ' error-state' : '');
+
+  const left = document.createElement('div');
+  left.className = 'job-left';
+
+  if (title) {
+    const titleDiv = document.createElement('div');
+    titleDiv.className = 'job-title-text';
+    titleDiv.textContent = title.length > 60 ? title.slice(0,60) + '…' : title;
+    left.appendChild(titleDiv);
+  }
+
+  const metaDiv = document.createElement('div');
+  metaDiv.className = 'job-meta';
+  metaDiv.innerHTML =
+    `<span class="badge-st ${stCls[job.status] || 'st-pending'}">${stMap[job.status] || job.status}</span>` +
+    (pref ? `<span class="badge badge-info">${esc(pref)}</span>` : '') +
+    (emp  ? `<span class="badge badge-ok">${esc(emp)}</span>`   : '') +
+    (sal  ? `<span class="badge badge-warn">${esc(sal)}</span>` : '');
+  left.appendChild(metaDiv);
+
+  if (isActive) {
+    const prog = document.createElement('div');
+    prog.className = 'prog-wrap';
+    prog.innerHTML = `<div class="prog-track"><div class="prog-fill analyzing" style="width:${pct}%"></div></div>
+      <div class="prog-row"><span>AI解析中</span><span>${pct}%</span></div>`;
+    left.appendChild(prog);
+  }
+
+  if (job.logs && job.logs.length) {
+    const logDiv = document.createElement('div');
+    logDiv.className = 'prog-log';
+    job.logs.forEach(l => {
+      const line = document.createElement('div');
+      line.className = 'log-line';
+      line.innerHTML = `<span class="log-ts">${esc(l.ts)}</span><span class="log-msg ${l.type}">${esc(l.msg)}</span>`;
+      logDiv.appendChild(line);
+    });
+    left.appendChild(logDiv);
+  }
+
+  if (job.error && !isActive) {
+    const errDiv = document.createElement('div');
+    errDiv.className = 'err-box';
+    errDiv.textContent = job.error;
+    left.appendChild(errDiv);
+  }
+
+  const right = document.createElement('div');
+  right.className = 'job-actions-col';
+  if (!isActive) {
+    const reBtn = document.createElement('button');
+    reBtn.className = 'btn btn-sm' + (job.status === 'error' ? ' btn-accent' : '');
+    reBtn.textContent = job.status === 'error' ? '🔄 再試行' : '🔄 再解析';
+    reBtn.addEventListener('click', () => analyzeJob(job.id));
+    right.appendChild(reBtn);
+
+    const delBtn = document.createElement('button');
+    delBtn.className = 'btn btn-sm btn-danger';
+    delBtn.textContent = '✕';
+    delBtn.addEventListener('click', async () => {
+      jobs = jobs.filter(j => j.id !== job.id);
+      save(); renderList(); updateHeaderCount(); updateTab2Stats();
+    });
+    right.appendChild(delBtn);
+  }
+
+  el.innerHTML = '';
+  const header = document.createElement('div');
+  header.className = 'job-header';
+  header.appendChild(left);
+  header.appendChild(right);
+  el.appendChild(header);
+}
+
+function updateHeaderCount() {
+  const done = jobs.filter(j => j.status === 'done').length;
+  document.getElementById('listTitle').textContent = '求人リスト — ' + jobs.length + '件（解析済み ' + done + '件）';
+}
+
+function showErr(msg) {
+  const el = document.getElementById('urlErr');
+  el.textContent = msg; el.classList.remove('hidden');
+  setTimeout(() => el.classList.add('hidden'), 3000);
+}
+
+// ── TAB2 ──
+function updateTab2Stats() {
+  const done = jobs.filter(j => j.parsed);
+  document.getElementById('statTotal').textContent    = jobs.length;
+  document.getElementById('statDone').textContent     = done.length;
+  document.getElementById('statFiltered').textContent = done.length;
+  document.getElementById('dlNote').textContent       = done.length + '件 × ' + CP_FIELDS.length + '列';
+}
+
+function getFiltered() { return jobs.filter(j => j.parsed); }
+
+function buildSelects() {
+  const done = jobs.filter(j => j.parsed);
+  buildSel('fPref',    unique(done, '都道府県1'));
+  buildSel('fEmp',     unique(done, '雇用形態'));
+  buildSel('fJobType', unique(done, '職種1'));
+}
+function unique(rows, key) {
+  const s = new Set();
+  rows.forEach(r => { const v = r.parsed?.[key]; if (v) s.add(String(v).trim()); });
+  return [...s].sort();
+}
+function buildSel(id, vals) {
+  const sel = document.getElementById(id);
+  while (sel.options.length > 1) sel.remove(1);
+  vals.forEach(v => { const o = document.createElement('option'); o.value = v; o.textContent = v; sel.appendChild(o); });
+}
+
+function applyFilters() {
+  const filtered = getFiltered();
+  const allDone  = filtered.length;
+  document.getElementById('statTotal').textContent    = jobs.length;
+  document.getElementById('statDone').textContent     = allDone;
+  document.getElementById('statFiltered').textContent = allDone;
+  renderPreview(filtered);
+  document.getElementById('dlNote').textContent = allDone + '件 × ' + CP_FIELDS.length + '列';
+}
+
+function renderTags() {}
+function resetFilters() { applyFilters(); }
+
+function renderPreview(filtered) {
+  document.getElementById('previewTitle').textContent = '変換結果プレビュー（' + filtered.length + '件）';
+  const cols = ['外部向けキャッチフレーズ','ポジション名','都道府県1','雇用形態','年収（下限）','年収（上限）','職種1'];
+  const rows = filtered.slice(0, 5);
+  if (!rows.length) {
+    document.getElementById('previewTable').innerHTML = '<tbody><tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--text3)">解析済みの求人がありません</td></tr></tbody>';
+    return;
+  }
+  let html = '<thead><tr>' + cols.map(c => '<th>'+c+'</th>').join('') + '</tr></thead><tbody>';
+  rows.forEach(j => {
+    html += '<tr>' + cols.map(c => {
+      const v = String(j.parsed[c]||'');
+      return '<td title="'+esc(v)+'">' + esc(v.length>30?v.slice(0,30)+'…':v) + '</td>';
+    }).join('') + '</tr>';
+  });
+  document.getElementById('previewTable').innerHTML = html + '</tbody>';
+}
+
+// ── CSV ──
+function downloadCSV() {
+  const companyIdCheck = document.getElementById('inputCompanyId')?.value.trim();
+  if (!companyIdCheck) { alert('企業IDを入力してください（必須項目です）'); return; }
+  const filtered = getFiltered();
+  if (!filtered.length) { alert('出力対象がありません（解析済みが必要です）'); return; }
+  const companyId = companyIdCheck;
+  const deptId    = document.getElementById('inputDeptId')?.value.trim() || '';
+  const cols = [...CP_FIELDS];
+  const lines = [cols.map(csvE).join(',')];
+  filtered.forEach(j => {
+    const p = convertMasters(j.parsed, companyId, deptId);
+    lines.push(cols.map(f => csvE(p[f]||'')).join(','));
+  });
+  const blob = new Blob(['\uFEFF' + lines.join('\r\n')], {type:'text/csv;charset=utf-8'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'careerplus_v24_' + new Date().toISOString().slice(0,10) + '.csv';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(a.href);
+}
+
+function csvE(v) {
+  const s = String(v == null ? '' : v);
+  return (s.includes(',') || s.includes('"') || s.includes('\n') || s.includes('\r')) ? '"'+s.replace(/"/g,'""')+'"' : s;
+}
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ── APIキー ──
+function initApiKey() {
+  const savedKey = store.getItem('anthropic_api_key') || '';
+  const input = document.getElementById('apiKeyInput');
+  if (input) input.value = savedKey;
+  updateApiKeyUI(savedKey);
+
+  const saveBtn = document.getElementById('btnSaveKey');
+  if (saveBtn) {
+    saveBtn.onclick = function() {
+      const input = document.getElementById('apiKeyInput');
+      const key = input ? input.value.trim() : '';
+      const statusEl = document.getElementById('apiKeyStatus');
+      if (!key) {
+        if (statusEl) { statusEl.textContent = '⚠ APIキーを入力してください'; statusEl.style.color = 'var(--warn)'; }
+        return;
+      }
+      try {
+        store.setItem('anthropic_api_key', key);
+        updateApiKeyUI(key);
+        if (statusEl) { statusEl.textContent = '✓ 保存しました'; statusEl.style.color = 'var(--accent)'; }
+      } catch(e) {
+        if (statusEl) { statusEl.textContent = 'エラー: ' + e.message; statusEl.style.color = 'var(--danger)'; }
+      }
+    };
+  }
+
+  const clearBtn = document.getElementById('btnClearKey');
+  if (clearBtn) {
+    clearBtn.onclick = function() {
+      store.removeItem('anthropic_api_key');
+      const input = document.getElementById('apiKeyInput');
+      if (input) input.value = '';
+      updateApiKeyUI('');
+      const statusEl = document.getElementById('apiKeyStatus');
+      if (statusEl) { statusEl.textContent = '削除しました'; statusEl.style.color = 'var(--text3)'; }
+    };
+  }
+
+  const toggleBtn = document.getElementById('btnToggleApiKey');
+  if (toggleBtn) {
+    toggleBtn.onclick = function() {
+      const panel = document.getElementById('apiKeyPanel');
+      if (!panel) return;
+      const isHidden = panel.style.display === 'none';
+      panel.style.display = isHidden ? 'block' : 'none';
+      toggleBtn.textContent = isHidden ? '✕ 閉じる' : '⚙ APIキー設定';
+    };
+  }
+}
+
+function updateApiKeyUI(key) {
+  const panel     = document.getElementById('apiKeyPanel');
+  const status    = document.getElementById('apiKeyStatus');
+  const indicator = document.getElementById('apiKeyIndicator');
+  const btn       = document.getElementById('btnToggleApiKey');
+  if (key && key.length > 10) {
+    panel.style.borderColor = 'rgba(74,222,128,.35)';
+    panel.style.display = 'none';  // 設定済みなら閉じる
+    if (btn) btn.textContent = '⚙ APIキー設定';
+    status.textContent = '✓ 設定済み: ' + key.slice(0,14) + '••••';
+    status.style.color = 'var(--accent)';
+    indicator.textContent = '✓ APIキー設定済み';
+    indicator.style.color = 'var(--accent)';
+  } else {
+    panel.style.borderColor = 'rgba(251,191,36,.35)';
+    panel.style.display = 'block';  // 未設定なら開く
+    if (btn) btn.textContent = '✕ 閉じる';
+    status.textContent = '⚠ APIキーを入力して「保存」を押してください';
+    status.style.color = 'var(--warn)';
+    indicator.textContent = '⚠ APIキー未設定';
+    indicator.style.color = 'var(--warn)';
+  }
+}
+function setApiKeyStatus(msg, color) {
+  const el = document.getElementById('apiKeyStatus');
+  el.textContent = msg; el.style.color = color;
+}
+function getApiKey() { return store.getItem('anthropic_api_key') || ''; }
+</script>
+</body>
+</html>
